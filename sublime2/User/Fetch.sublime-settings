@@ -1,0 +1,13 @@
+{
+	"files":
+	{
+		"backbone": "http://backbonejs.org/backbone-min.js",
+		"jquery": "http://code.jquery.com/jquery.min.js",
+		"lodash": "https://raw.github.com/bestiejs/lodash/v0.5.2/lodash.min.js",
+		"underscore": "http://underscorejs.org/underscore-min.js"
+	},
+	"packages":
+	{
+		"html5_boilerplate": "https://github.com/h5bp/html5-boilerplate/zipball/master"
+	}
+}

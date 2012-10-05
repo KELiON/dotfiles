@@ -1,0 +1,4 @@
+{
+	"sublimelinter_popup_errors_on_save": true,
+  "jslint_options": "--indent 2 --nomen --predef $,_,require,module,window, console"
+}
