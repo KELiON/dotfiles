@@ -1,3 +1,2 @@
-# The rest of my fun git aliases
 alias be='bundle exec'
-alias bes="bes"
+alias bes='bundle exec standup'
