@@ -1,0 +1,16 @@
+#!/bin/sh
+#
+# view gem source in editor
+
+if test "$1" == ""
+then
+  echo 'Specify gem name';
+else
+  p=$(bundle show $1);
+  if [[ $p == /* ]]
+  then
+    e $p;
+  else
+    echo $p;
+  fi
+fi
