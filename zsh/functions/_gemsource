@@ -1,0 +1,8 @@
+#compdef gemsource
+if [ -f Gemfile ]; then
+  recent=`last_modified .gemlist~ Gemfile`
+  if [[ $recent != '.gemlist~' ]]; then
+    bundle show | cut -d " " -f 4 | sed 1d > .gemlist~
+  fi
+  compadd `cat .gemlist~`
+fi
