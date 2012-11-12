@@ -1,0 +1,9 @@
+if [ -f config/routes.rb ]; then
+  recent=`ls -t config/routes.rb .routeslist\~ 2>/dev/null | head -n 1`
+  if [[ $recent != '.routeslist~' ]]; then
+    rake routes > .routeslist~
+  fi
+  cat .routeslist~ | grep "$1"
+else
+  echo 'Routes file not found';
+fi
