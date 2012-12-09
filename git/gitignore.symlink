@@ -5,3 +5,4 @@
 *.rbc
 .rake_tasks~
 .gemlist~
+.routeslist~

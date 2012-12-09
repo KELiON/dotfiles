@@ -1,0 +1,2 @@
+#compdef work_at
+_files -W $PROJECTS -/
