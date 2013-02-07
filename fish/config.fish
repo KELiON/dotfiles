@@ -4,5 +4,6 @@ set -g DOTFILES $HOME/.dotfiles
 
 set fish_greeting ""
 
-#prevent recursion
 for file in (ls $DOTFILES/**/*.fish | grep -v /fish/); . $file; end;
+
+true

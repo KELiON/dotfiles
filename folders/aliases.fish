@@ -1,2 +1,6 @@
 alias dl="cd ~/Downloads/"
 alias db="cd ~/SkyDrive/Dropbox/"
+alias ..="cd ../"
+alias ...="cd ../../"
+alias ~="cd ~"
+alias -="cd -"
