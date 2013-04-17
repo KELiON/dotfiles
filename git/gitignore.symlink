@@ -6,7 +6,8 @@
 .rake_tasks~
 .gemlist~
 .routeslist~
-.tags
+*.tags
+*.tags_sorted_by_file
 .gemtags
 *.sublime-project
 *.sublime-workspace
