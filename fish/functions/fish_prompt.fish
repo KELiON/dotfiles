@@ -16,14 +16,15 @@ function fish_prompt
   if [ (echo $day | grep -E '0|6') ]
     set symbol '🍺'
   else
-    if [ (echo $time | grep -E '1[0-9]') ]
-      set symbol '☀'
+    if [ (echo $time | grep -E '14') ]
+      set symbol '🍲'
     else
-      if [ (echo $time | grep -E '(19|2[0-3])') ]
-        set symbol '🍺'
-      end
-      if [ (echo $time | grep -E '14') ]
-        set symbol '🍲'
+      if [ (echo $time | grep -E '1[0-9]') ]
+        set symbol '☀'
+      else
+        if [ (echo $time | grep -E '(19|2[0-3])') ]
+          set symbol '🍺'
+        end
       end
     end
   end
