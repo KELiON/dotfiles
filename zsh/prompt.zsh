@@ -56,6 +56,29 @@ rb_prompt(){
   fi
 }
 
+symbol() {
+  hour=$(date +%H)
+  day=$(date +%u)
+  if [[ $(echo $day | grep -E '0|6') != "" ]]
+  then
+    echo '🍺'
+  else
+    if [[ $(echo $hour | grep -E '14') != "" ]]
+    then
+      echo '🍲'
+    else
+      if [[ $(echo $hour | grep -E '1[0-9]') != "" ]]
+      then
+        echo '☀'
+      else
+        if [[ $(echo $hour | grep -E '(19|2[0-3])') != "" ]] then
+          echo '🍺'
+        fi
+      fi
+    fi
+  fi
+}
+
 # This keeps the number of todos always available the right hand side of my
 # command line. I filter it to only count those tagged as "+next", so it's more
 # of a motivation to clear out the list.
@@ -79,7 +102,7 @@ directory_name(){
   echo "%{$fg_bold[cyan]%}%1/%\/%{$reset_color%}"
 }
 
-export PROMPT=$'\n$(rb_prompt) in $(directory_name) $(git_dirty)$(need_push)\n› '
+export PROMPT=$'\n$(rb_prompt) in $(directory_name) $(git_dirty)$(need_push)$(symbol)  '
 set_prompt () {
   export RPROMPT="%{$fg_bold[cyan]%}$(todo)%{$reset_color%}"
 }
