@@ -5,8 +5,6 @@ export ZSH=$HOME/.dotfiles
 # your project folder that we can `c [tab]` to
 export PROJECTS=~/projects
 
-[ -s "/Users/KELiON/.scm_breeze/scm_breeze.sh" ] && source "/Users/KELiON/.scm_breeze/scm_breeze.sh"
-
 # source every .zsh file in this rep
 for config_file ($ZSH/**/*.zsh) source $config_file
 
@@ -23,3 +21,5 @@ compinit
 
 # load every completion after autocomplete loads
 for config_file ($ZSH/**/completion.zsh) source $config_file
+
+[ -s "/Users/KELiON/.scm_breeze/scm_breeze.sh" ] && source "/Users/KELiON/.scm_breeze/scm_breeze.sh"
