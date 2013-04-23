@@ -14,6 +14,10 @@
 [difftool "sourcetree"]
         cmd = opendiff \"$LOCAL\" \"$REMOTE\"
         path =
-[mergetool "sourcetree"]
-        cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
-        trustExitCode = true
+[merge]
+        tool = sublime
+[mergetool "sublime"]
+        cmd = subl -w $MERGED
+        trustExitCode = false
+[color]
+        ui = true
