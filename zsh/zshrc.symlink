@@ -22,4 +22,4 @@ compinit
 # load every completion after autocomplete loads
 for config_file ($ZSH/**/completion.zsh) source $config_file
 
-[ -s "/Users/KELiON/.scm_breeze/scm_breeze.sh" ] && source "/Users/KELiON/.scm_breeze/scm_breeze.sh"
+[ -s "$ZSH/.scm_breeze/scm_breeze.sh" ] && source "$ZSH/.scm_breeze/scm_breeze.sh"
