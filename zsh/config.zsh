@@ -39,6 +39,8 @@ setopt HIST_REDUCE_BLANKS
 #   like: git comm-[tab]
 setopt complete_aliases
 
+setopt no_complete_aliases
+
 zle -N newtab
 
 bindkey '^[^[[D' backward-word
