@@ -86,7 +86,7 @@ todo(){
   if (( $+commands[todo.sh] ))
   then
     num=$(echo $(todo.sh ls +next | wc -l))
-    let todos=num-2
+    let todos=num-1
     if [ $todos != 0 ]
     then
       echo "| $todos"

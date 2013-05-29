@@ -21,3 +21,5 @@
         trustExitCode = false
 [color]
         ui = true
+[push]
+        default = upstream
