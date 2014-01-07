@@ -8,5 +8,6 @@
 .routeslist~
 .tags
 .gemtags
+.tags_sorted_by_file
 *.sublime-project
 *.sublime-workspace

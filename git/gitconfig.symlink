@@ -11,9 +11,11 @@
         keepBackup = true
 [core]
         excludesfile = /Users/KELiON/.gitignore_global
+	editor = subl -n -w
+        pager = `brew --prefix git`/share/git-core/contrib/diff-highlight/diff-highlight | less
 [difftool "sourcetree"]
-        cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-        path =
+	cmd = /usr/local/bin/ksdiff -w \"$LOCAL\" \"$REMOTE\"
+	path = 
 [merge]
         tool = sublime
 [mergetool "sublime"]
@@ -23,3 +25,6 @@
         ui = true
 [push]
         default = upstream
+[mergetool "sourcetree"]
+	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
+	trustExitCode = true
