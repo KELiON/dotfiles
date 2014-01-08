@@ -1,3 +1,4 @@
+alias be='bundle exec'
 alias migrate='bundle exec rake db:migrate'
 alias migrate:undo='bundle exec rake db:rollback'
 alias migrate:redo='bundle exec rake db:redo'

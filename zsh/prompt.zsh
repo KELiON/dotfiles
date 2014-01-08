@@ -47,15 +47,6 @@ need_push () {
   fi
 }
 
-rb_prompt(){
-  if (( $+commands[rbenv] ))
-  then
-    echo "%{$fg_bold[yellow]%}$(rbenv version | awk '{print $1}')%{$reset_color%}"
-  else
-    echo ""
-  fi
-}
-
 symbol() {
   hour=$(date +%H)
   day=$(date +%u)
@@ -84,11 +75,7 @@ directory_name(){
 }
 
 export PROMPT=$'$(directory_name) $(git_dirty)$(need_push)$(symbol)  '
-set_prompt () {
-  export RPROMPT="$(rb_prompt) %{$fg_bold[cyan]%}%{$reset_color%}"
-}
 
 precmd() {
   title "zsh" "%m" "%55<...<%~"
-  set_prompt
 }
