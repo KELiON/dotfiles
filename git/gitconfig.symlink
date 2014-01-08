@@ -10,7 +10,7 @@
 [mergetool]
         keepBackup = true
 [core]
-        excludesfile = /Users/KELiON/.gitignore_global
+        excludesfile = /Users/KELiON/.gitignore
 	editor = subl -n -w
         pager = `brew --prefix git`/share/git-core/contrib/diff-highlight/diff-highlight | less
 [difftool "sourcetree"]
