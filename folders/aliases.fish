@@ -1,5 +1,5 @@
 alias dl="cd ~/Downloads/"
-alias db="cd ~/SkyDrive/Dropbox/"
+alias db="cd ~/Dropbox/"
 alias ..="cd ../"
 alias ...="cd ../../"
 alias ~="cd ~"

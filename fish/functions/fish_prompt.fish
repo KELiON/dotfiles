@@ -1,3 +1,7 @@
+function _git_branch_name
+  echo (git symbolic-ref HEAD ^/dev/null | sed -e 's|^refs/heads/||')
+end
+
 function fish_prompt
   set -l cyan (set_color -o cyan)
   set -l yellow (set_color -o yellow)
@@ -12,6 +16,8 @@ function fish_prompt
   set -l day (date +%u)
 
   set -l symbol '🌙'
+
+  set -l git_branch "$normal at "$red(_git_branch_name)"$normal"
 
   if [ (echo $day | grep -E '0|6') ]
     set symbol '🍺'
@@ -29,5 +35,5 @@ function fish_prompt
     end
   end
 
-  echo -s $cwd $normal " $symbol  "
+  echo -s $cwd $git_branch $normal " $symbol  "
 end
