@@ -34,18 +34,6 @@ git_prompt_info () {
  echo "${ref#refs/heads/}"
 }
 
-unpushed () {
-  $git cherry -v @{upstream} 2>/dev/null
-}
-
-need_push () {
-  if [[ $(unpushed) == "" ]]
-  then
-    echo " "
-  else
-    echo " with %{$fg_bold[magenta]%}unpushed%{$reset_color%} "
-  fi
-}
 
 symbol() {
   hour=$(date +%H)
@@ -74,7 +62,7 @@ directory_name(){
   echo "%{$fg_bold[cyan]%}%1/%\/%{$reset_color%}"
 }
 
-export PROMPT=$'$(directory_name) $(git_dirty)$(need_push)$(symbol)  '
+export PROMPT=$'$(directory_name) $(git_dirty)$(symbol)  '
 
 precmd() {
   title "zsh" "%m" "%55<...<%~"
