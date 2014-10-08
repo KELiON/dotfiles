@@ -1,0 +1,18 @@
+{
+	"color_scheme": "Packages/User/Espresso Soda (SL).tmTheme",
+	"detect_indentation": true,
+	"font_size": 17.0,
+	"highlight_modified_tabs": true,
+	"ignored_packages":
+	[
+		"Markdown",
+		"Vintage"
+	],
+	"save_on_focus_lost": true,
+	"tab_size": 2,
+	"theme": "Soda Light.sublime-theme",
+	"translate_tabs_to_spaces": true,
+	"trim_trailing_white_space_on_save": true,
+	"use_tab_stops": true,
+	"word_wrap": false
+}
