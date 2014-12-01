@@ -1,0 +1,92 @@
+#!/usr/bin/env ruby
+
+command = ARGV.join " "
+
+RUSSIAN = /[а-яА-ЯёЁ]/
+
+KEYS = {
+  # down case
+  "ё" => "`",
+  "й" => "q",
+  "ц" => "w",
+  "у" => "e",
+  "к" => "r",
+  "е" => "t",
+  "н" => "y",
+  "г" => "u",
+  "ш" => "i",
+  "щ" => "o",
+  "з" => "p",
+  "х" => "[",
+  "ъ" => "]",
+  "ф" => "a",
+  "ы" => "s",
+  "в" => "d",
+  "а" => "f",
+  "п" => "g",
+  "р" => "h",
+  "о" => "j",
+  "л" => "k",
+  "д" => "l",
+  "ж" => ";",
+  "э" => "'",
+  "я" => "z",
+  "ч" => "x",
+  "с" => "c",
+  "м" => "v",
+  "и" => "b",
+  "т" => "n",
+  "ь" => "m",
+  "б" => ",",
+  "ю" => ".",
+  # UP CASE
+  "Ё" => "~",
+  "Й" => "Q",
+  "Ц" => "W",
+  "У" => "E",
+  "К" => "R",
+  "Е" => "T",
+  "Н" => "Y",
+  "Г" => "U",
+  "Ш" => "I",
+  "Щ" => "O",
+  "З" => "P",
+  "Х" => "{",
+  "Ъ" => "}",
+  "Ф" => "A",
+  "Ы" => "S",
+  "В" => "D",
+  "А" => "F",
+  "П" => "G",
+  "Р" => "H",
+  "О" => "J",
+  "Л" => "K",
+  "Д" => "L",
+  "Ж" => ":",
+  "Э" => "\"",
+  "Я" => "Z",
+  "Ч" => "X",
+  "С" => "C",
+  "М" => "V",
+  "И" => "B",
+  "Т" => "N",
+  "Ь" => "M",
+  "Б" => "<",
+  "Ю" => ">"
+  # [todo]: add symbols?
+}
+
+def run(*cmd)
+  $stderr.puts "Running '#{cmd.join(' ')}' instead"
+  system(*cmd)
+end
+
+case command
+when RUSSIAN
+  # switch keyboard language from russian to english
+  # and try to execute command again
+  command = command.gsub(RUSSIAN, KEYS)
+  run(command)
+else
+  abort "Error: No matching action defined in #{__FILE__.inspect}"
+end
