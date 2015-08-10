@@ -1,0 +1,31 @@
+#!/bin/bash
+
+# vim: filetype=sh
+
+prog=$(basename $0)
+branch=$(git rev-parse --abbrev-ref HEAD)
+
+if [ "$branch" == "master" ]; then
+  echo Already on master. Exiting.
+  exit 0
+fi
+
+need_to_stash=$(git status --porcelain|grep -v '^??')
+if [[ $need_to_stash ]]; then
+  git stash save "stashed by $prog"
+fi
+git checkout master
+git fetch -p
+git pull --rebase origin master
+git checkout $branch
+
+if [[ $(git rebase master) ]]; then
+  if [[ $need_to_stash ]]; then
+    git stash pop
+  fi
+else
+  echo git rebase failed.
+  if [[ $need_to_stash ]]; then
+    echo You have changes stashed by $prog
+  fi
+fi
