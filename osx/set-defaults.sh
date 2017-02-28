@@ -15,6 +15,9 @@ defaults write NSGlobalDomain com.apple.mouse.tapBehavior -int 1
 # Set a blazingly fast keyboard repeat rate
 defaults write NSGlobalDomain KeyRepeat -int 0
 
+# Allow press and hold for all keys
+defaults write NSGlobalDomain ApplePressAndHoldEnabled -bool false
+
 # Enable subpixel font rendering on non-Apple LCDs
 defaults write NSGlobalDomain AppleFontSmoothing -int 2
 
@@ -27,22 +30,20 @@ defaults write com.apple.finder WarnOnEmptyTrash -bool false
 # Empty Trash securely by default
 defaults write com.apple.finder EmptyTrashSecurely -bool true
 
-
 # Don’t animate opening applications from the Dock
 defaults write com.apple.dock launchanim -bool false
 
 # Speed up Mission Control animations
 defaults write com.apple.dock expose-animation-duration -float 0.1
 
-# Don’t show Dashboard as a Space
-defaults write com.apple.dock "dashboard-in-overlay" -bool true
+# Disable dashboard
+defaults write com.apple.dashboard mcx-disabled -boolean NO && killall Dock
 
 # Make Dock icons of hidden applications translucent
 defaults write com.apple.dock showhidden -bool true
 
 # Show hidden files in osx
 defaults write com.apple.Finder AppleShowAllFiles TRUE
-
 
 # Enable full keyboard access for all controls (e.g. enable Tab in modal dialogs)
 defaults write NSGlobalDomain AppleKeyboardUIMode -int 3

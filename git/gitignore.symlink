@@ -12,3 +12,4 @@
 *.sublime-project
 *.sublime-workspace
 .bundle
+node_modules
