@@ -24,3 +24,5 @@ for config_file ($ZSH/**/completion.zsh) source $config_file
 
 source ~/.iterm2_shell_integration.`basename $SHELL`
 export PATH="$HOME/.yarn/bin:$PATH"
+
+[[ -s "/etc/grc.zsh" ]] && source /etc/grc.zsh
