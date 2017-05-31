@@ -1,1 +1,7 @@
-cd $PROJECTS/$1;
+local dir
+if [ -z "$1" ]
+then
+  dir="$PROJECTS/$(ls --color=auto $PROJECTS | fzf)" && cd "$dir"
+else
+  cd $PROJECTS/$1;
+fi
