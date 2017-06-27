@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 set -x
 
 settings_path=~/Library/Application\ Support/Code/User
@@ -13,3 +13,9 @@ ln -s ~/.dotfiles/vscode/settings $settings_path
 
 # install all extensions from list
 while read in; do code --install-extension "$in"; done < ~/.dotfiles/vscode/extensions
+
+# add cron job to update extensions list once in hour
+crontab -l | sed '/vscode\/update-extensions-list/d' > mycron
+echo "0 * * * * ~/.dotfiles/vscode/update-extensions-list" > mycron
+crontab mycron
+rm mycron
