@@ -14,8 +14,15 @@ alias grm="git status | grep deleted | awk '{print \$3}' | xargs git rm"
 alias hb="hub browse"
 
 alias gpo="git push origin \$(gcb)"
+alias gpl="git pull --rebase origin \$(gcb)"
 
+alias gb="git branch"
 alias gs="git status"
+alias gco="git checkout"
+alias gc="git commit"
+
+# git current branch
+alias gcb="git rev-parse --abbrev-ref HEAD"
 
 # .g shortcuts
 alias .ga=".g add"

@@ -3,6 +3,7 @@
 command = ARGV.join " "
 
 RUSSIAN = /[а-яА-ЯёЁ]/
+STARTS_WITH_DOT = /^\..+/
 
 KEYS = {
   # down case
@@ -82,6 +83,9 @@ def run(*cmd)
 end
 
 case command
+when STARTS_WITH_DOT
+  command = command.gsub(/^\./, '')
+  run(command)
 when RUSSIAN
   # switch keyboard language from russian to english
   # and try to execute command again

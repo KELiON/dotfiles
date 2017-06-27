@@ -15,5 +15,5 @@ then
   git add $(git status -s | fzf -m --reverse | cut -c 4-)
 elif test "$1" == "diff"
 then
-  git diff $(git ls-files -m | fzf)
+  git diff $(git status --porcelain | fzf | cut -c 4-)
 fi
