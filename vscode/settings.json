@@ -1,0 +1,30 @@
+{
+    "workbench.colorTheme": "Atom One Dark",
+    "workbench.iconTheme": "vscode-icons",
+    "editor.fontLigatures": true,
+    "editor.fontFamily": "Fira Code",
+    "editor.fontSize": 17,
+    "editor.tabSize": 2,
+    "workbench.sideBar.location": "left",
+    "workbench.statusBar.visible": true,
+    "workbench.activityBar.visible": true,
+    "window.zoomLevel": 0,
+    "window.openFilesInNewWindow": "off",
+    "window.reopenFolders": "all",
+    "window.newWindowDimensions": "inherit",
+    "files.autoSave": "onFocusChange",
+    "vim.useSystemClipboard": true,
+    "vim.insertModeKeyBindings": [
+        {
+            "before": ["j", "j"],
+            "after": ["<Esc>"]
+        }
+    ],
+    "vim.disableAnnoyingNeovimMessage": true,
+    "projectManager.vscode.baseFolders": [
+        "$home/projects"
+    ],
+    "projectManager.git.baseFolders": [
+        "$home/projects"
+    ]
+}
