@@ -1,0 +1,15 @@
+#!/bin/sh
+set -x
+
+settings_path=~/Library/Application\ Support/Code/User
+
+if [[ -f $settings_path ]]
+then
+  rm -rf $settings_path
+fi
+
+# symlink settings in
+ln -s ~/.dotfiles/vscode/settings $settings_path
+
+# install all extensions from list
+while read in; do code --install-extension "$in"; done < ~/.dotfiles/vscode/extensions
