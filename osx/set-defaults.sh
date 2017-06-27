@@ -42,6 +42,9 @@ defaults write com.apple.dashboard mcx-disabled -boolean NO && killall Dock
 # Make Dock icons of hidden applications translucent
 defaults write com.apple.dock showhidden -bool true
 
+# Make dock immutable
+defaults write com.apple.dock contents-immutable -bool false
+
 # Show hidden files in osx
 defaults write com.apple.Finder AppleShowAllFiles TRUE
 
