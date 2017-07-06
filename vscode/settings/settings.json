@@ -5,6 +5,7 @@
     "editor.fontFamily": "Fira Code",
     "editor.fontSize": 17,
     "editor.tabSize": 2,
+    "editor.minimap.enabled": false,
     "workbench.sideBar.location": "left",
     "workbench.statusBar.visible": true,
     "workbench.activityBar.visible": true,
