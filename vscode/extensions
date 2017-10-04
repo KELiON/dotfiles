@@ -4,10 +4,13 @@ HookyQR.beautify
 Zignd.html-css-class-completion
 alefragnani.project-manager
 andischerer.theme-atom-one-dark
+bung87.rails
 christian-kohler.npm-intellisense
 christian-kohler.path-intellisense
 dbaeumer.vscode-eslint
 donjayamanne.githistory
+eamodio.gitlens
+felipecaputo.git-project-manager
 flowtype.flow-for-vscode
 freebroccolo.theme-atom-one-dark
 gerane.Theme-Solarized-light
@@ -17,7 +20,11 @@ misogi.ruby-rubocop
 ms-vscode.sublime-keybindings
 msjsdiag.debugger-for-chrome
 octref.vetur
+rebornix.Ruby
 robertohuertasm.vscode-icons
+sianglim.slim
 tonsky.theme-alabaster
 vscodevim.vim
 wix.vscode-import-cost
+zhuangtongfa.Material-theme
+ziyasal.vscode-open-in-github
