@@ -1,0 +1,57 @@
+tap "heroku/brew"
+tap "homebrew/boneyard"
+tap "homebrew/bundle"
+tap "homebrew/cask"
+tap "homebrew/cask-versions"
+tap "homebrew/cask-fonts"
+tap "homebrew/core"
+tap "homebrew/services"
+tap "petere/postgresql"
+tap "homebrew/core"
+brew "ansible"
+brew "python"
+brew "awscli"
+brew "webp"
+brew "git"
+brew "mackup"
+brew "node"
+brew "parallel"
+brew "petere/postgresql/postgresql-common", link: false
+brew "petere/postgresql/postgresql@9.6", link: true
+brew "ruby-build"
+brew "rbenv"
+brew "redis"
+brew "sqlite"
+brew "svgo"
+brew "wget"
+brew "yarn", args: ["without-node"]
+cask "iterm2"
+cask "1password"
+cask "bartender"
+cask "cleanshot"
+cask "docker"
+cask "firefox"
+cask "font-fira-code"
+cask "google-chrome"
+cask "ngrok"
+cask "skype"
+cask "sublime-text"
+cask "spotify"
+cask "transmission"
+cask "tunnelblick"
+cask "visual-studio-code"
+cask "vlc"
+cask "zoomus"
+cask "dropbox"
+cask "day-o"
+cask "notion"
+cask "karabiner-elements"
+cask "raycast"
+brew "mas"
+mas "Slack", id: 803453959
+mas "Spark", id: 1176895641
+mas "Telegram", id: 747648890
+mas "Things3", id: 904280696
+mas "Xcode", id: 497799835
+mas "Pixelmator", id: 407963104
+mas "Divvy Window Manager", id: 413857545
