@@ -92,5 +92,5 @@ when RUSSIAN
   command = command.gsub(RUSSIAN, KEYS)
   run(command)
 else
-  abort "Error: No matching action defined in #{__FILE__.inspect}"
+  abort "Error: No matching action #{command} defined in #{__FILE__.inspect}"
 end
