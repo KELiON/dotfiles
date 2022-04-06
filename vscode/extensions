@@ -1,9 +1,13 @@
 2gua.rainbow-brackets
+alefragnani.project-manager
+allanoricil.nuxt-vscode-extension
 andischerer.theme-atom-one-dark
 bung87.vscode-gemfile
 christian-kohler.npm-intellisense
 christian-kohler.path-intellisense
+Cronos87.yaml-symbols
 cssho.vscode-svgviewer
+cybai.yaml-key-viewer
 dbaeumer.vscode-eslint
 drKnoxy.eslint-disable-snippets
 eamodio.gitlens
@@ -12,12 +16,11 @@ Equinusocio.vsc-community-material-theme
 Equinusocio.vsc-material-theme
 equinusocio.vsc-material-theme-icons
 esbenp.prettier-vscode
-felipecaputo.git-project-manager
 flowtype.flow-for-vscode
-foam.foam-vscode
 freebroccolo.theme-atom-one-dark
 gcazaciuc.vscode-flow-ide
 gerane.Theme-Solarized-light
+GitHub.copilot
 GitHub.vscode-pull-request-github
 golang.go
 jcbuisson.vue
@@ -27,6 +30,7 @@ misogi.ruby-rubocop
 mohsen1.prettify-json
 ms-azuretools.vscode-docker
 MS-CEINTL.vscode-language-pack-es
+ms-vscode-remote.remote-containers
 ms-vscode.node-debug2
 ms-vscode.sublime-keybindings
 ms-vsliveshare.vsliveshare
@@ -56,6 +60,7 @@ vscjava.vscode-spring-boot-dashboard
 vscjava.vscode-spring-initializr
 vscode-icons-team.vscode-icons
 wingrunr21.vscode-ruby
+wix.glean
 wix.vscode-import-cost
 yzhang.markdown-all-in-one
 ziyasal.vscode-open-in-github
