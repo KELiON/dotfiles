@@ -23,6 +23,7 @@ brew "sqlite"
 brew "svgo"
 brew "wget"
 brew "yarn", args: ["without-node"]
+brew "mitmproxy"
 cask "iterm2"
 cask "1password"
 cask "bartender"
