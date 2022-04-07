@@ -11,6 +11,7 @@
 	excludesfile = /Users/KELiON/.gitignore
 	editor = vim
         pager = `brew --prefix git`/share/git-core/contrib/diff-highlight/diff-highlight | less
+	hooksPath = /Users/kelion/.githooks
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
 	path = 
