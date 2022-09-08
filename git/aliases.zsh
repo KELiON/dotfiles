@@ -25,7 +25,7 @@ alias gc="git commit"
 alias gcb="git rev-parse --abbrev-ref HEAD"
 
 # update current branch from main branch
-alias gupd="main_branch=$(git remote show origin | sed -n '/HEAD branch/s/.*: //p'); echo \"rebasing origin/\$main_branch\"...; git fetch origin && git rebase origin/\$main_branch"
+alias gupd="main_branch=\$(git remote show origin | sed -n '/HEAD branch/s/.*: //p'); echo \"rebasing origin/\$main_branch\"...; git fetch origin && git rebase origin/\$main_branch"
 
 # .g shortcuts
 alias .ga=".g add"
