@@ -1,0 +1,25 @@
+#!/bin/sh
+
+filename=$1
+
+# split timecodes by -
+IFS='-' read -ra parts <<< "$2"
+
+# assign parts to variables
+from="${parts[0]}"
+to="${parts[1]}"
+
+extension="${filename##*.}"
+source_filename="${filename%.*}"
+counter=1
+output_filename="${source_filename}-${counter}.${extension}"
+while [ -e "$output_filename" ]
+do
+  ((counter++))
+  output_filename="${source_filename}-${counter}.${extension}"
+done
+echo "Trim $filename -> $output_filename from $from to $to"
+
+ffmpeg -ss $from -to $to -i $filename -vcodec copy -acodec copy -avoid_negative_ts make_zero -loglevel error $output_filename
+#ffmpeg -noaccurate_seek -ss $from -i $filename -y -vcodec copy -acodec copy -to $to -avoid_negative_ts make_zero -hide_banner -loglevel error $output_filename
+touch -r $filename $output_filename
