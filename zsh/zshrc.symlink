@@ -46,3 +46,7 @@ PROMPT_TITLE='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}\007"'
 export PROMPT_COMMAND="${PROMPT_TITLE}; ${PROMPT_COMMAND}"
 
 eval $(/opt/homebrew/bin/brew shellenv)
+
+autoload -U edit-command-line
+zle -N edit-command-line
+bindkey '^X^E' edit-command-line
