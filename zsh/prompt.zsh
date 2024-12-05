@@ -35,25 +35,19 @@ git_prompt_info () {
 }
 
 
-symbol() {
-  hour=$(date +%H)
-  day=$(date +%u)
-  if [[ $(echo $day | grep -E '0|6') != "" ]]
+# This assumes that you always have an origin named `origin`, and that you only
+# care about one specific origin. If this is not the case, you might want to use
+# `$git cherry -v @{upstream}` instead.
+need_push () {
+  if [ $($git rev-parse --is-inside-work-tree 2>/dev/null) ]
   then
-    echo '🍺'
-  else
-    if [[ $(echo $hour | grep -E '14') != "" ]]
+    number=$($git cherry -v origin/$(git symbolic-ref --short HEAD) 2>/dev/null | wc -l | bc)
+
+    if [[ $number == 0 ]]
     then
-      echo '🍲'
+      echo " "
     else
-      if [[ $(echo $hour | grep -E '1[0-9]') != "" ]]
-      then
-        echo '☀'
-      else
-        if [[ $(echo $hour | grep -E '(19|2[0-3])') != "" ]] then
-          echo '🍺'
-        fi
-      fi
+      echo " with %{$fg_bold[magenta]%}$number unpushed%{$reset_color%}"
     fi
   fi
 }
@@ -62,7 +56,9 @@ directory_name(){
   echo "%{$fg_bold[cyan]%}%1/%\/%{$reset_color%}"
 }
 
-export PROMPT=$'$(directory_name) $(git_dirty)$(symbol)  '
+export PROMPT_EOL_MARK=''
+
+export PROMPT=$' $(directory_name) $(git_dirty)$(need_push)› '
 
 precmd() {
   title "zsh" "%m" "%55<...<%~"
