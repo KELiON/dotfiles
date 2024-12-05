@@ -12,13 +12,14 @@
 	editor = vim
         pager = `brew --prefix git`/share/git-core/contrib/diff-highlight/diff-highlight | less
 	hooksPath = /Users/kelion/.githooks
+	pager = delta
 [difftool "sourcetree"]
 	cmd = opendiff \"$LOCAL\" \"$REMOTE\"
-	path = 
+	path =
 [merge]
-        tool = sublime
-[mergetool "sublime"]
-        cmd = subl -w $MERGED
+        tool = zed
+[mergetool "zed"]
+        cmd = zed -w $MERGED
         trustExitCode = false
 [color]
         ui = true
