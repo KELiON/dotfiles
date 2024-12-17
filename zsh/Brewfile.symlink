@@ -50,6 +50,7 @@ cask "karabiner-elements"
 cask "raycast"
 cask "zed"
 brew "mas"
+brew "lazygit"
 mas "Slack", id: 803453959
 mas "Telegram", id: 747648890
 mas "Things3", id: 904280696
