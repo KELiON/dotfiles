@@ -1,0 +1,67 @@
+#!/bin/bash
+# Add com.kelion.turnonlight.plist to ~/Library/LaunchAgents/ to run the script automatically
+#
+# <?xml version="1.0" encoding="UTF-8"?>
+# <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+# <plist version="1.0">
+# <dict>
+#     <key>Label</key>
+#     <string>com.kelion.turnonlight</string>
+#     <key>ProgramArguments</key>
+#     <array>
+#         <string>/Users/kelion/.dotfiles/bin/turn-on-light-when-camera-is-on</string>
+#     </array>
+#     <key>RunAtLoad</key>
+#     <true/>
+#     <key>KeepAlive</key>
+#     <true/>
+#     <key>StandardOutPath</key>
+#     <string>/tmp/com.kelion.turnonlight.out</string>
+#     <key>StandardErrorPath</key>
+#     <string>/tmp/com.kelion.turnonlight.err</string>
+# </dict>
+# </plist>
+#
+# And run
+# launchctl load ~/Library/LaunchAgents/com.kelion.turnonlight.plist
+
+FLAG_FILE="/tmp/elgato_script_controlled"
+
+# Function to get current light status
+get_light_status() {
+    local status
+    status=$(curl -s -X GET "http://192.168.1.131:9123/elgato/lights")
+    echo "$status" | grep -o '"on":.*,' | cut -d':' -f2 | cut -d',' -f1
+}
+
+is_display_connected() {
+    system_profiler SPDisplaysDataType | grep -q "Odyssey G70B"
+    return $?
+}
+
+exec log stream --predicate '(eventMessage CONTAINS "AVCaptureSessionDidStartRunningNotification" || eventMessage CONTAINS "AVCaptureSessionDidStopRunningNotification")' |
+  /usr/bin/grep -vE --line-buffered '^Filter' |
+  tee /dev/stderr |
+  /usr/bin/sed -Eu 's/.*(Start|Stop).*/\1/' |
+  while read -r event; do
+    echo "Camera $event"
+    if [ "$event" = "Start" ]; then
+      current_status=$(get_light_status)
+      if [ "$current_status" = "0" ] && is_display_connected; then
+        echo "Lamp was off, turning on"
+        curl -X PUT "http://192.168.1.131:9123/elgato/lights" -H "Content-Type: application/json" -d '{"lights":[{"on":1}]}'
+        # Create flag file only if we actually turned on the light
+        touch "$FLAG_FILE"
+      fi
+    else
+      # Only turn off if the flag file exists (meaning the script turned it on)
+      if [ -f "$FLAG_FILE" ]; then
+        echo "Lamp off (was controlled by script)"
+        curl -X PUT "http://192.168.1.131:9123/elgato/lights" -H "Content-Type: application/json" -d '{"lights":[{"on":0}]}'
+        # Remove the flag file
+        rm "$FLAG_FILE"
+      else
+        echo "Lamp state unchanged (was turned on manually)"
+      fi
+    fi
+  done
