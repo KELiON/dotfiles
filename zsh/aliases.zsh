@@ -4,4 +4,10 @@ alias clear_skype='sudo sqlite3 "$HOME/Library/Application Support/Skype/subboti
 alias clear_git="git gc --aggressive"
 alias ibrew='arch -x86_64 /usr/local/bin/brew'
 
-alias ai="ANTHROPIC_API_KEY=\$(op read "op://Private/.dotfiles/ANTHROPIC_API_KEY" --account=my.1password.com) claude --dangerously-skip-permissions"
+function ai() {
+  if [[ "$PWD" == "$HOME/projects/"*raycast* ]]; then
+    claude --dangerously-skip-permissions "$@"
+  else
+    ANTHROPIC_API_KEY=$(op read "op://Private/.dotfiles/ANTHROPIC_API_KEY" --account=my.1password.com) claude --dangerously-skip-permissions "$@"
+  fi
+}
