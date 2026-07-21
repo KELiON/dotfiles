@@ -7,3 +7,8 @@ if test -f $completion
 then
   source $completion
 fi
+
+if (( $+functions[compdef] )); then
+  compdef _git gco=git-checkout
+  compdef _git gb=git-branch
+fi

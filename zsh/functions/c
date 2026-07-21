@@ -1,7 +1,20 @@
 local dir
-if [ -z "$1" ]
-then
-  dir="$PROJECTS/$(ls --color=auto $PROJECTS | fzf)" && cd "$dir"
+local -a matches
+if [[ -z "$1" ]]; then
+  dir="$(print -rl -- $PROJECTS/*(N-/:t) | fzf)" && cd "$PROJECTS/$dir"
+  return
+fi
+if [[ -d "$PROJECTS/$1" ]]; then
+  cd "$PROJECTS/$1"
+  return
+fi
+local pattern="*${(j:*/*:)${(s:/:)1}}*"
+matches=($PROJECTS/${~pattern}(N-/))
+if (( ${#matches} == 1 )); then
+  cd "${matches[1]}"
+elif (( ${#matches} > 1 )); then
+  dir="$(print -rl -- "${matches[@]#$PROJECTS/}" | fzf)" && cd "$PROJECTS/$dir"
 else
-  cd $PROJECTS/$1;
+  echo "c: no project matching '$1'" >&2
+  return 1
 fi

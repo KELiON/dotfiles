@@ -1,2 +1,8 @@
 #compdef c
-_files -W $PROJECTS -/
+local cur="${words[CURRENT]}"
+local base=""
+[[ "$cur" == */* ]] && base="${cur%/*}/"
+local -a dirs
+dirs=($PROJECTS/$base*(N-/))
+dirs=(${dirs#$PROJECTS/})
+compadd -M 'l:|=* r:|=*' -a dirs

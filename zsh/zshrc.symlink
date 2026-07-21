@@ -1,35 +1,31 @@
 skip_global_compinit=1
-# shortcut to this dotfiles path is $ZSH
 export ZSH=$HOME/.dotfiles
 
-# your project folder that we can `c [tab]` to
 export PROJECTS=~/projects
 
-# source every .zsh file in this rep
 for config_file ($ZSH/**/*.zsh) source $config_file
 
-# use .localrc for SUPER SECRET CRAP that you don't
-# want in your public, versioned repo.
-if [[ -a ~/.localrc ]]
-then
+if [[ -a ~/.localrc ]]; then
   source ~/.localrc
 fi
 
-# Homebrew completition
-if type brew &>/dev/null
-then
-  FPATH="$(brew --prefix)/share/zsh/site-functions:${FPATH}"
+# Static brew exports instead of eval $(brew shellenv) — saves ~150ms
+export HOMEBREW_PREFIX="/opt/homebrew"
+export HOMEBREW_CELLAR="/opt/homebrew/Cellar"
+export HOMEBREW_REPOSITORY="/opt/homebrew"
+export PATH="/opt/homebrew/bin:/opt/homebrew/sbin:${PATH}"
+export MANPATH="/opt/homebrew/share/man${MANPATH+:$MANPATH}:"
+export INFOPATH="/opt/homebrew/share/info:${INFOPATH:-}"
 
-  autoload -Uz compinit
+FPATH="/opt/homebrew/share/zsh/site-functions:${FPATH}"
+
+autoload -Uz compinit
+if [[ -n ~/.zcompdump(#qN.mh+24) ]]; then
   compinit
+else
+  compinit -C
 fi
 
-
-# initialize autocomplete here, otherwise functions won't be loaded
-autoload -U compinit
-compinit
-
-# load every completion after autocomplete loads
 for config_file ($ZSH/**/completion.zsh) source $config_file
 
 source ~/.iterm2_shell_integration.`basename $SHELL`
@@ -38,15 +34,43 @@ source ~/.iterm2_shell_integration.`basename $SHELL`
 
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 
-# added by travis gem
 [ -f /Users/kelion/.travis/travis.sh ] && source /Users/kelion/.travis/travis.sh
 
-# Support for Timing app
 PROMPT_TITLE='echo -ne "\033]0;${USER}@${HOSTNAME%%.*}:${PWD/#$HOME/~}\007"'
 export PROMPT_COMMAND="${PROMPT_TITLE}; ${PROMPT_COMMAND}"
 
-eval $(/opt/homebrew/bin/brew shellenv)
+export PATH="/usr/local/bin:$PATH"
 
 autoload -U edit-command-line
 zle -N edit-command-line
 bindkey '^X^E' edit-command-line
+
+export OBJC_DISABLE_INITIALIZE_FORK_SAFETY=YES
+
+export LANG=en_US.UTF-8
+export LC_ALL=en_US.UTF-8
+
+export PNPM_HOME="/Users/kelion/Library/pnpm"
+case ":$PATH:" in
+  *":$PNPM_HOME:"*) ;;
+  *) export PATH="$PNPM_HOME:$PATH" ;;
+esac
+
+# Static java path instead of subprocess call — saves ~50ms
+export JAVA_HOME="/opt/homebrew/opt/openjdk@17"
+export PATH=$JAVA_HOME/bin:$PATH
+export ANDROID_HOME=$HOME/Library/Android/sdk
+export PATH=$PATH:$ANDROID_HOME/emulator
+export PATH=$PATH:$ANDROID_HOME/platform-tools
+
+. "$HOME/.local/bin/env"
+
+[ -s "/Users/kelion/.bun/_bun" ] && source "/Users/kelion/.bun/_bun"
+
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# >>> yolo integration >>>
+# Managed by Yolo. Do not edit between these markers.
+[ -f "/Users/kelion/Library/Application Support/app.glaze.macos.249tnhjr-local.internal/integration.sh" ] && source "/Users/kelion/Library/Application Support/app.glaze.macos.249tnhjr-local.internal/integration.sh"
+# <<< yolo integration <<<

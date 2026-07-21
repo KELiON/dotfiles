@@ -13,3 +13,9 @@
 *.sublime-workspace
 .bundle
 node_modules
+.env-switch
+.gstack/
+
+**/.claude/settings.local.json
+
+**/.claude/.cc-writes/

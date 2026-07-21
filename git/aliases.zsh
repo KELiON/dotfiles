@@ -16,9 +16,7 @@ alias hb="hub browse"
 alias gpo="git push origin \$(gcb)"
 alias gpl="git pull --rebase origin \$(gcb)"
 
-alias gb="git branch"
 alias gs="git status"
-alias gco="git checkout"
 alias gc="git commit"
 
 # git current branch
@@ -31,7 +29,3 @@ alias gupd="main_branch=\$(git remote show origin | sed -n '/HEAD branch/s/.*: /
 alias .ga=".g add"
 alias .gd=".g diff"
 alias .glog=".g log"
-
-# AI Worktree - git worktree management for AI coding sessions
-# Usage: aw new [name], aw list
-source "$HOME/projects/ai-workspace/shell-integration.sh"

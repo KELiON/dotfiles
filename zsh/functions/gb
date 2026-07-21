@@ -1,0 +1,35 @@
+local flag branch wt_path main_wt ret=0
+if (( $# == 0 )); then
+  git for-each-ref refs/heads --sort=-committerdate --format='%(if)%(HEAD)%(then)%(color:bold green)* %(align:44)%(refname:short)%(end)%(color:reset)%(else)  %(align:44)%(refname:short)%(end)%(end) %(color:yellow)%(committerdate:relative)%(color:reset)%(if)%(worktreepath)%(then)  %(color:cyan)%(worktreepath)%(color:reset)%(end)'
+  return
+fi
+
+if [[ "$1" == "-d" || "$1" == "-D" ]] && (( $# > 1 )); then
+  flag="$1"
+  shift
+  git worktree prune
+  main_wt="$(git worktree list --porcelain | head -1 | cut -c10-)"
+  for branch in "$@"; do
+    wt_path="$(git worktree list --porcelain | awk -v ref="refs/heads/$branch" '/^worktree /{p=substr($0,10)} /^branch /{if (substr($0,8)==ref) {print p; exit}}')"
+    if [[ -n "$wt_path" ]]; then
+      if [[ "$wt_path" == "$main_wt" ]]; then
+        echo "gb: '$branch' is checked out in the main worktree, not deleting" >&2
+        ret=1
+        continue
+      fi
+      if [[ "${PWD:A}" == "${wt_path:A}" || "${PWD:A}" == "${wt_path:A}"/* ]]; then
+        cd "$main_wt"
+      fi
+      echo "gb: removing worktree $wt_path"
+      if [[ "$flag" == "-D" ]]; then
+        git worktree remove --force "$wt_path" || { ret=1; continue }
+      else
+        git worktree remove "$wt_path" || { ret=1; continue }
+      fi
+    fi
+    git branch "$flag" "$branch" || ret=1
+  done
+  return $ret
+fi
+
+git branch "$@"

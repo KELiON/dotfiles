@@ -1,0 +1,41 @@
+local branch base wt_path main_wt
+if [[ "$1" == "-w" ]]; then
+  shift
+  branch="$1"
+  base="$2"
+  if [[ -z "$branch" ]]; then
+    echo "usage: gco -w <branch> [base]" >&2
+    return 1
+  fi
+  git rev-parse --is-inside-work-tree >/dev/null || return 1
+  wt_path="$(git worktree list --porcelain | awk -v ref="refs/heads/$branch" '/^worktree /{p=substr($0,10)} /^branch /{if (substr($0,8)==ref) {print p; exit}}')"
+  if [[ -n "$wt_path" ]]; then
+    cd "$wt_path"
+    return
+  fi
+  main_wt="$(git worktree list --porcelain | head -1 | cut -c10-)"
+  wt_path="$(dirname "$main_wt")/$(basename "$main_wt")-${branch//\//-}"
+  if [[ -e "$wt_path" ]]; then
+    echo "gco: $wt_path already exists" >&2
+    return 1
+  fi
+  if git show-ref --verify --quiet "refs/heads/$branch"; then
+    git worktree add "$wt_path" "$branch" || return 1
+  elif [[ -z "$base" ]] && git show-ref --verify --quiet "refs/remotes/origin/$branch"; then
+    git worktree add --track -b "$branch" "$wt_path" "origin/$branch" || return 1
+  else
+    git worktree add -b "$branch" "$wt_path" ${base:+"$base"} || return 1
+  fi
+  cd "$wt_path"
+  return
+fi
+
+if (( $# == 1 )) && [[ "$1" != -* ]] && git rev-parse --is-inside-work-tree >/dev/null 2>&1; then
+  wt_path="$(git worktree list --porcelain | awk -v ref="refs/heads/$1" '/^worktree /{p=substr($0,10)} /^branch /{if (substr($0,8)==ref) {print p; exit}}')"
+  if [[ -n "$wt_path" && "$wt_path" != "$(git rev-parse --show-toplevel)" ]]; then
+    echo "gco: switching to worktree $wt_path"
+    cd "$wt_path"
+    return
+  fi
+fi
+git checkout "$@"

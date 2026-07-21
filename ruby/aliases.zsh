@@ -4,7 +4,6 @@ alias migrate:undo='bundle exec rake db:rollback'
 alias migrate:redo='bundle exec rake db:redo'
 alias rs='r s'
 alias rc='r c'
-alias rg='r g'
 
 # Shortcut for `bundle exec rails` and `bundle exec rake`.
 # If script/rails and script/rake are available, use them instead as they are much

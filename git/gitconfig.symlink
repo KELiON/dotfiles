@@ -24,10 +24,13 @@
 [color]
         ui = true
 [push]
-        default = upstream
+	default = simple
+	autoSetupRemote = true
 [mergetool "sourcetree"]
 	cmd = /Applications/SourceTree.app/Contents/Resources/opendiff-w.sh \"$LOCAL\" \"$REMOTE\" -ancestor \"$BASE\" -merge \"$MERGED\"
 	trustExitCode = true
 [rebase]
 	autosquash = true
 	autoStash = true
+[branch]
+	autoSetupMerge = simple
