@@ -88,7 +88,6 @@ cask "visual-studio-code"
 cask "vlc"
 cask "zed"
 cask "zoom"
-mas "Divvy Window Manager", id: 413857545
 mas "Slack", id: 803453959
 mas "Telegram", id: 747648890
 mas "Things3", id: 904280696
