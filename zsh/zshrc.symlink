@@ -28,7 +28,7 @@ fi
 
 for config_file ($ZSH/**/completion.zsh) source $config_file
 
-source ~/.iterm2_shell_integration.`basename $SHELL`
+[ -f ~/.iterm2_shell_integration.`basename $SHELL` ] && source ~/.iterm2_shell_integration.`basename $SHELL`
 
 [[ -s "/etc/grc.zsh" ]] && source /etc/grc.zsh
 
@@ -63,7 +63,7 @@ export ANDROID_HOME=$HOME/Library/Android/sdk
 export PATH=$PATH:$ANDROID_HOME/emulator
 export PATH=$PATH:$ANDROID_HOME/platform-tools
 
-. "$HOME/.local/bin/env"
+[ -f "$HOME/.local/bin/env" ] && . "$HOME/.local/bin/env"
 
 [ -s "/Users/kelion/.bun/_bun" ] && source "/Users/kelion/.bun/_bun"
 
