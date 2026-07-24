@@ -1,14 +1,25 @@
-# Uses git's autocompletion for inner commands. Assumes an install of git's
-# bash `git-completion` script at $completion below (this is where Homebrew
-# tosses it, at least).
-completion='$(brew --prefix)/share/zsh/site-functions/_git'
+_gco() {
+  local -aU branches
+  branches=(${(f)"$(git for-each-ref --format='%(refname:short)' refs/heads refs/remotes 2>/dev/null)"})
+  branches=(${branches:#*/HEAD})
+  branches=(${branches#origin/})
+  if [[ $words[CURRENT] != -* ]] && compadd -M 'l:|=* r:|=*' -a branches; then
+    return
+  fi
+  local service=git
+  words=(git checkout "${(@)words[2,-1]}")
+  (( CURRENT++ ))
+  _git
+}
 
-if test -f $completion
-then
-  source $completion
-fi
+_gb() {
+  local service=git
+  words=(git branch "${(@)words[2,-1]}")
+  (( CURRENT++ ))
+  _git
+}
 
 if (( $+functions[compdef] )); then
-  compdef _git gco=git-checkout
-  compdef _git gb=git-branch
+  compdef _gco gco
+  compdef _gb gb
 fi
