@@ -1,0 +1,95 @@
+#!/bin/sh
+
+sessions=${CLAUDE_CONFIG_DIR:-$HOME/.claude}/sessions
+images=$(dirname "$0")/agent-tabs-images
+tab=$(printf '\t')
+
+state=$(tmux \
+  list-panes -a -F "P${tab}#{pane_id}${tab}#{@agent}${tab}#{&&:#{window_active},#{session_attached}}${tab}#{pane_current_command}${tab}#{pane_title}" \; \
+  list-clients -F "C${tab}#{client_termname}${tab}#{client_tty}:#{client_created}:#{client_cell_width}x#{client_cell_height}" \; \
+  display-message -p "S${tab}#{@agent_shown}${tab}#{@agent_clients}${tab}#{?@agent_icon,1,0}") || exit 0
+
+case $state in
+  *"${tab}0")
+    placeholder=$(printf '\364\216\273\256')
+    first=$(printf '\314\205')
+    second=$(printf '\314\215')
+    panes='#{P:#{@agent} }'
+    image() { printf '#[fg=colour%s]%s' "$1" "$placeholder$first$first$placeholder$first$second"; }
+    icon() { printf '#{?#{&&:#{==:#{client_termname},xterm-ghostty},#{m:*claude-%s*,%s}},%s,%s}' "$1" "$panes" "$2" "$3"; }
+    waiting=$(icon waiting "$(image 202)" ' #[fg=#e78284]●')
+    running=$(icon running "$(image 201)" ' #[fg=#e5c890]#{?#{e|m:%S,2},◐,◑}')
+    finished=$(icon done "$(image 203)" ' #[fg=#a6d189]✓')
+    tmux set -g @agent_icon "#{?#{m:*waiting*,$panes},$waiting,#{?#{m:*running*,$panes},$running,#{?#{m:*done*,$panes},$finished,}}}"
+    ;;
+esac
+
+working=
+case $state in
+  *"${tab}codex${tab}"*)
+    for pane in $(printf '%s\n' "$state" | awk -F'\t' '$1 == "P" && $5 == "codex" { print $2 }'); do
+      tmux capture-pane -p -t "$pane" | grep -Eq '^.{0,4}[A-Z][a-z]+ \([0-9]+[smh][^)]*esc to interrupt\)' && working="$working $pane"
+    done
+    ;;
+esac
+
+set -- "$sessions"/*.json
+[ -e "$1" ] || set --
+
+commands=$(printf '%s\n' "$state" | awk -F'\t' -v working="$working" -v images="$images" '
+  function value(key,   found) {
+    if (!match($0, "\"" key "\"[ ]*:[ ]*\"[^\"]*\"")) return ""
+    found = substr($0, RSTART, RLENGTH)
+    sub(/^[^:]*:[ ]*"/, "", found)
+    sub(/"$/, "", found)
+    return found
+  }
+  /^\{/ {
+    pane = value("tmux")
+    sub(/.*\./, "", pane)
+    updated = match($0, /"statusUpdatedAt"[ ]*:[ ]*[0-9]+/) ? substr($0, RSTART + 18, RLENGTH - 18) + 0 : 0
+    if (pane == "" || (pane in latest && updated < latest[pane])) next
+    latest[pane] = updated
+    claude[pane] = value("status")
+    next
+  }
+  $1 == "P" { count++; id[count] = $2; was[count] = $3; visible[count] = $4 + 0; program[count] = $5; title[count] = $6 }
+  $1 == "C" && $2 == "xterm-ghostty" { clients = clients (clients == "" ? "" : " ") $3 }
+  $1 == "S" { shown_before = $2; clients_before = $3 }
+  END {
+    total = split(working, list, " ")
+    for (i = 1; i <= total; i++) codex[list[i]] = 1
+    for (i = 1; i <= count; i++) {
+      pane = id[i]; agent = ""; now = ""
+      if (program[i] !~ /^-?(zsh|bash|fish|sh)$/) {
+        if (pane in claude) {
+          agent = "claude"
+          now = claude[pane] == "busy" ? "running" : (claude[pane] == "waiting" ? "waiting" : "idle")
+        } else if (program[i] == "codex") {
+          agent = "codex"
+          now = index(title[i], "Action Required") ? "waiting" : ((pane in codex) ? "running" : "idle")
+        }
+      }
+      if (now == "idle") now = (visible[i] || was[i] == "") ? "" : "done"
+      next_value = now == "" ? "" : agent "-" now
+      if (next_value != was[i]) print (next_value == "" ? "set -pu -t " pane " @agent" : "set -p -t " pane " @agent " next_value)
+      if (agent == "claude" && now != "") needed[substr(now, 1, 1)] = 1
+    }
+    for (i = 1; i <= 3; i++) {
+      kind = substr("rwd", i, 1)
+      if (kind in needed) shown = shown kind
+    }
+    if (shown == shown_before && clients == clients_before) exit
+    for (i = 1; i <= 3; i++) {
+      kind = substr("rwd", i, 1)
+      had = index(shown_before, kind) && clients == clients_before
+      if (index(shown, kind) && !had) upload = upload kind
+      if (!index(shown, kind) && (had || clients != clients_before)) remove = remove kind
+    }
+    print "set -g @agent_shown \"" shown "\""
+    print "set -g @agent_clients \"" clients "\""
+    printf "run-shell -b \"\047%s\047 -%s -%s\"\n", images, upload, remove
+  }
+' "$@" -)
+
+[ -z "$commands" ] || printf '%s\n' "$commands" | tmux source-file - 2>/dev/null

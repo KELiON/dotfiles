@@ -1,0 +1,119 @@
+#!/usr/bin/env python3
+import base64
+import os
+import subprocess
+import sys
+import time
+import zlib
+
+BODY = bytes((215, 119, 87, 255))
+EYES = bytes((0, 0, 0, 255))
+QUADRANTS = {" ": 0, "▘": 1, "▝": 2, "▀": 3, "▖": 4, "▌": 5, "▛": 7, "▗": 8, "▐": 10, "▜": 11, "▄": 12, "▙": 13, "▟": 14, "█": 15}
+FEET = " ▝▝   ▝▝ "
+
+
+def grid(top, middle, feet, top_eyes, middle_eyes):
+    pixels = [[None] * 18 for _ in range(6)]
+    for row, (glyphs, eyes) in enumerate(((top, top_eyes), (middle, middle_eyes), (feet, (0, 0)))):
+        for column, glyph in enumerate(glyphs):
+            for quadrant in range(4):
+                filled = QUADRANTS[glyph] >> quadrant & 1
+                color = BODY if filled else EYES if eyes[0] <= column < eyes[1] else None
+                pixels[row * 2 + quadrant // 2][column * 2 + quadrant % 2] = color
+    return pixels
+
+
+def flip(pixels):
+    return [row[::-1] for row in pixels]
+
+
+FRONT = grid(" ▐▛███▛█ ", "▝▜██████▀", FEET, (2, 8), (2, 7))
+ARM_UP = grid(" ▐▛███▛█▄", "▝▜██████▘", FEET, (2, 8), (2, 7))
+TURN_AWAY = [
+    grid(" ▐█▜██▛█ ", "▝▜██████▀", FEET, (2, 8), (2, 7)),
+    grid("  █▛██▛▌ ", " ▝█████▛ ", "  ▘▘  ▘▘ ", (2, 7), (2, 7)),
+    grid("  ▐█▛█▜  ", "  ▐████  ", "  ▝▝ ▝▝  ", (3, 7), (3, 7)),
+    grid("   ██▛▌  ", "   ███▌  ", "   ▘  ▘  ", (3, 6), (3, 6)),
+]
+EDGE = grid("   ▐██   ", "   ▐██   ", "   ▝ ▝   ", (4, 6), (4, 6))
+BACK_TURN = [
+    grid("   ███▌  ", "   ███▌  ", "   ▘  ▘  ", (3, 6), (3, 6)),
+    grid("  ▐████  ", "  ▐████  ", "  ▝▝ ▝▝  ", (3, 7), (3, 7)),
+    grid("  █████▌ ", " ▝█████▛ ", "  ▘▘  ▘▘ ", (2, 7), (2, 7)),
+]
+BACK = grid(" ▐██████ ", "▝▜██████▀", FEET, (2, 8), (2, 7))
+TURN_BACK = [
+    grid("   ▛██▌  ", "   ███▌  ", "   ▘  ▘  ", (3, 6), (3, 6)),
+    grid("  ▐▜▛██  ", "  ▐████  ", "  ▝▝ ▝▝  ", (3, 7), (3, 7)),
+    grid("  ▛██▛█▌ ", " ▝█████▛ ", "  ▘▘  ▘▘ ", (2, 7), (2, 7)),
+    grid(" ▐▛███▜█ ", "▝▜██████▀", FEET, (2, 8), (2, 7)),
+]
+SPIN = [*TURN_AWAY, EDGE, *BACK_TURN, BACK, *map(flip, reversed(BACK_TURN)), flip(EDGE), *TURN_BACK]
+
+IMAGES = {
+    "r": (201, [(FRONT, 1200), *((pose, 70) for pose in SPIN)]),
+    "w": (202, [(ARM_UP, 260), (FRONT, 260)]),
+    "d": (203, [(FRONT, 0)]),
+}
+
+
+def render(pixels, cell_width, cell_height):
+    width = 2 * cell_width
+    dot_width = width // 18
+    dot_height = min(round(dot_width * cell_height / cell_width), (cell_height - 2) // 6)
+    left = (width - 18 * dot_width) // 2
+    top = (cell_height - 6 * dot_height) // 2 + 1
+    image = bytearray(width * cell_height * 4)
+    for y, row in enumerate(pixels):
+        for x, color in enumerate(row):
+            if color:
+                for line in range(top + y * dot_height, top + (y + 1) * dot_height):
+                    start = (line * width + left + x * dot_width) * 4
+                    image[start:start + 4 * dot_width] = color * dot_width
+    return zlib.compress(bytes(image), 9)
+
+
+def command(control, payload=b""):
+    data = base64.standard_b64encode(payload).decode()
+    return f"\033_G{control},q=2{';' + data if data else ''}\033\\".encode()
+
+
+def sequences(kind, cell_width, cell_height, upload):
+    number, frames = IMAGES[kind]
+    yield command(f"a=d,d=I,i={number}")
+    if not upload:
+        return
+    size = f"i={number},f=32,o=z,s={2 * cell_width},v={cell_height}"
+    for index, (pixels, gap) in enumerate(frames):
+        yield command(f"a=f,z={gap},{size}" if index else f"a=t,{size}", render(pixels, cell_width, cell_height))
+    if len(frames) > 1:
+        yield command(f"a=a,i={number},r=1,z={frames[0][1]}")
+        yield command(f"a=a,i={number},s=3,v=1")
+    yield command(f"a=p,U=1,i={number},c=2,r=1")
+
+
+def main():
+    upload, remove = (argument[1:] for argument in sys.argv[1:3])
+    listing = subprocess.run(
+        ["tmux", "list-clients", "-F", "#{client_termname} #{client_tty} #{client_cell_width} #{client_cell_height}"],
+        capture_output=True,
+        text=True,
+    ).stdout
+    for client in listing.splitlines():
+        terminal, tty, cell_width, cell_height = client.split()
+        cell_width, cell_height = int(cell_width), int(cell_height)
+        if terminal != "xterm-ghostty" or cell_width < 9 or cell_height < 8:
+            continue
+        try:
+            output = os.open(tty, os.O_WRONLY | os.O_NOCTTY)
+        except OSError:
+            continue
+        for kind in upload + remove:
+            for sequence in sequences(kind, cell_width, cell_height, kind in upload):
+                os.write(output, sequence)
+                time.sleep(0.002)
+        os.close(output)
+
+
+if __name__ == "__main__":
+    main()

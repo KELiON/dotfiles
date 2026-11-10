@@ -1,0 +1,8 @@
+# sesh: smart tmux session manager (uses zoxide rankings)
+
+import = ["~/.config/sesh/local.toml"]
+
+[[session]]
+name = "transcriber"
+path = "~/projects/transcriber"
+alias = "tr"

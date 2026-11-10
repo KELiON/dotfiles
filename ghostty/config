@@ -1,0 +1,123 @@
+# --- Fonts ---
+# SF Mono, JetBrains Mono, and MonoLisa are highly recommended for cmux
+font-family = "JetBrainsMono Nerd Font"
+font-size = 16
+# Extra vertical space per row (percent of the font's cell). Makes dense
+# agent output / diffs easier to scan. Reload applies to NEW surfaces.
+adjust-cell-height = 10%
+
+# Best Practice: If your font feels too thin on macOS displays, enable thickening
+font-thicken = true
+
+# Best Practice: If AI agents output code with complex symbols, you may want to
+# disable ligatures to read exactly what is typed. Use -liga to disable.
+font-feature = -liga
+
+# --- Rendering & Theme ---
+# cmux perfectly inherits Ghostty themes
+theme = "Catppuccin Frappe"
+# Ghostty native splits (Cmd+D). Default divider is a generic grey.
+# overlay0 from Catppuccin Frappe so the line matches the theme.
+split-divider-color = #737994
+
+# window-vsync = false was here — removed for a 1-week experiment.
+# Default (vsync ON) avoids tearing and saves battery with heavy agent
+# streaming. Re-add ONLY if scrolling feels laggier than before.
+
+# Scrollback limit is in BYTES, not lines (default 10MB).
+# 100MB so AI agent output never gets truncated.
+scrollback-limit = 100000000
+
+# --- Shell integration ---
+# cursor: shell tells Ghostty the cursor shape per context (nvim/vim block, etc.)
+# sudo: sudo prompts get their own cursor + title
+# title: window title shows the running command
+# ssh-terminfo: auto-installs xterm-ghostty terminfo on remote hosts (1.2+)
+# ssh-env: forwards COLORTERM/TERM_PROGRAM so remote truecolor works
+shell-integration = zsh
+shell-integration-features = cursor,sudo,title,ssh-terminfo,ssh-env
+
+# --- Clipboard ---
+# copy-on-select = clipboard: selecting text with the mouse copies straight to
+# the system clipboard (iTerm-style). No Cmd+C needed after a drag.
+copy-on-select = clipboard
+# Allow apps inside the terminal to read/write the clipboard (OSC 52 —
+# lets tmux or remote SSH sessions copy to your Mac's clipboard).
+clipboard-read = allow
+clipboard-write = allow
+# Keep paste protection ON: multi-line pastes get a confirmation so a
+# copied `rm -rf` can't execute itself.
+# clipboard-paste-protection = true  (this is the default, kept explicitly)
+
+# --- macOS layer ---
+# Left Option = Alt (so Option+arrows / Option+h,l work in tmux & vim),
+# right Option stays a normal Mac key for special characters (é, ñ, etc.)
+macos-option-as-alt = left
+# Warn before closing a window/tab when a process is running (detected via
+# shell integration from Lesson 1.2). `always` would warn even with no process.
+confirm-close-surface = true
+# Restore windows/tabs/splits on restart
+window-save-state = always
+# Hide native titlebar + tab strip. macOS 27 paints those tabs in liquid-glass
+# grey that Ghostty cannot recolor. Use tmux windows (prefix+c / prefix+n)
+# and Cmd+N for extra Ghostty windows. Traffic lights still appear on hover.
+macos-titlebar-style = hidden
+# Breathing room between cells and the window chrome (points, DPI-scaled).
+# Runtime reload only applies this to NEW tabs/windows.
+window-padding-x = 8
+window-padding-y = 8
+window-padding-balance = true
+
+# No overlay showing column/row counts while resizing a window
+resize-overlay = never
+# Hide the mouse pointer while typing
+mouse-hide-while-typing = true
+# Solid cursor, no blinking (less visual noise with agents streaming)
+cursor-style = block
+cursor-style-blink = false
+# Default is no-system. Enable macOS notifications for BEL / OSC 9 so
+# Claude can ping you when it needs input and Ghostty is in the background.
+bell-features = system,attention,title
+
+# Titlebar is hidden, so Ghostty tabs have no UI. Cmd+T / Cmd+1-9
+# talk to tmux instead (prefix is Ctrl-A). Cmd+N stays a real
+# Ghostty window. Outside tmux these send Ctrl-A then the key.
+keybind = super+t=text:\x01c
+# Cmd+W closes the tmux window (this "tab") — prefix+& asks y/n first,
+# so an accidental press can't kill a running Claude/Codex pane.
+# Cmd+Shift+W stays Ghostty's close_window (detach; agents keep running).
+keybind = super+w=text:\x01&
+# Cmd+K → tmux prefix + Ctrl-K (clear pane + history)
+keybind = super+k=text:\x01\x0b
+keybind = super+1=text:\x011
+keybind = super+digit_1=text:\x011
+keybind = super+2=text:\x012
+keybind = super+digit_2=text:\x012
+keybind = super+3=text:\x013
+keybind = super+digit_3=text:\x013
+keybind = super+4=text:\x014
+keybind = super+digit_4=text:\x014
+keybind = super+5=text:\x015
+keybind = super+digit_5=text:\x015
+keybind = super+6=text:\x016
+keybind = super+digit_6=text:\x016
+keybind = super+7=text:\x017
+keybind = super+digit_7=text:\x017
+keybind = super+8=text:\x018
+keybind = super+digit_8=text:\x018
+keybind = super+9=text:\x019
+# Shift+Enter as CSI-u (distinct from Enter). Claude Code / other TUIs
+# treat this as a newline instead of submit. Harmless until Claude is installed.
+keybind = shift+enter=text:\x1b[13;2u
+
+# --- Quick terminal (Quake-style dropdown) ---
+# Global keybind: works from ANY app while Ghostty is running.
+# First use will prompt for Accessibility permission — grant it.
+# Cmd+` is macOS "cycle windows of this app" — don't steal it.
+# Hyper is Caps Lock hold = ctrl+opt+cmd+shift (Karabiner).
+# physical:grave_accent: Hyper includes Shift, so the character is "~"
+# not "`". Bind the keycap, not the glyph.
+keybind = global:ctrl+shift+alt+super+physical:grave_accent=toggle_quick_terminal
+quick-terminal-position = top
+quick-terminal-size = 40%
+quick-terminal-autohide = true
