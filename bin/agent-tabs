@@ -16,11 +16,10 @@ case $state in
     second=$(printf '\314\215')
     panes='#{P:#{@agent} }'
     image() { printf '#[fg=colour%s]%s' "$1" "$placeholder$first$first$placeholder$first$second"; }
-    icon() { printf '#{?#{&&:#{==:#{client_termname},xterm-ghostty},#{m:*claude-%s*,%s}},%s,%s}' "$1" "$panes" "$2" "$3"; }
-    waiting=$(icon waiting "$(image 202)" ' #[fg=#e78284]●')
+    icon() { printf '#{?#{&&:#{==:#{client_termname},xterm-ghostty},#{m/r:claude-(%s),%s}},%s,%s}' "$1" "$panes" "$2" "$3"; }
+    attention=$(icon 'waiting|done' "$(image 202)" ' #[fg=#e78284]●')
     running=$(icon running "$(image 201)" ' #[fg=#e5c890]#{?#{e|m:%S,2},◐,◑}')
-    finished=$(icon done "$(image 203)" ' #[fg=#a6d189]✓')
-    tmux set -g @agent_icon "#{?#{m:*waiting*,$panes},$waiting,#{?#{m:*running*,$panes},$running,#{?#{m:*done*,$panes},$finished,}}}"
+    tmux set -g @agent_icon "#{?#{m/r:waiting|done,$panes},$attention,#{?#{m:*running*,$panes},$running,}}"
     ;;
 esac
 
@@ -73,15 +72,15 @@ commands=$(printf '%s\n' "$state" | awk -F'\t' -v working="$working" -v images="
       if (now == "idle") now = (visible[i] || was[i] == "") ? "" : "done"
       next_value = now == "" ? "" : agent "-" now
       if (next_value != was[i]) print (next_value == "" ? "set -pu -t " pane " @agent" : "set -p -t " pane " @agent " next_value)
-      if (agent == "claude" && now != "") needed[substr(now, 1, 1)] = 1
+      if (agent == "claude" && now != "") needed[now == "running" ? "r" : "w"] = 1
     }
-    for (i = 1; i <= 3; i++) {
-      kind = substr("rwd", i, 1)
+    for (i = 1; i <= 2; i++) {
+      kind = substr("rw", i, 1)
       if (kind in needed) shown = shown kind
     }
     if (shown == shown_before && clients == clients_before) exit
-    for (i = 1; i <= 3; i++) {
-      kind = substr("rwd", i, 1)
+    for (i = 1; i <= 2; i++) {
+      kind = substr("rw", i, 1)
       had = index(shown_before, kind) && clients == clients_before
       if (index(shown, kind) && !had) upload = upload kind
       if (!index(shown, kind) && (had || clients != clients_before)) remove = remove kind

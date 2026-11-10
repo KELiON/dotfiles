@@ -53,7 +53,6 @@ SPIN = [*TURN_AWAY, EDGE, *BACK_TURN, BACK, *map(flip, reversed(BACK_TURN)), fli
 IMAGES = {
     "r": (201, [(FRONT, 1200), *((pose, 70) for pose in SPIN)]),
     "w": (202, [(ARM_UP, 260), (FRONT, 260)]),
-    "d": (203, [(FRONT, 0)]),
 }
 
 
