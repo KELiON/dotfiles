@@ -26,12 +26,18 @@
 # launchctl load ~/Library/LaunchAgents/com.kelion.turnonlight.plist
 
 FLAG_FILE="/tmp/elgato_script_controlled"
+LIGHT_URL="http://elgato-key-light-mini-2230.local:9123/elgato/lights"
 
 # Function to get current light status
 get_light_status() {
     local status
-    status=$(curl -s -X GET "http://192.168.1.131:9123/elgato/lights")
+    status=$(curl -s -m 5 -X GET "$LIGHT_URL")
     echo "$status" | grep -o '"on":.*,' | cut -d':' -f2 | cut -d',' -f1
+}
+
+set_light() {
+    curl -s -m 5 -X PUT "$LIGHT_URL" -H "Content-Type: application/json" -d "{\"lights\":[{\"on\":$1}]}"
+    echo
 }
 
 is_display_connected() {
@@ -39,17 +45,19 @@ is_display_connected() {
     return $?
 }
 
-exec log stream --predicate '(eventMessage CONTAINS "AVCaptureSessionDidStartRunningNotification" || eventMessage CONTAINS "AVCaptureSessionDidStopRunningNotification")' |
-  /usr/bin/grep -vE --line-buffered '^Filter' |
-  tee /dev/stderr |
-  /usr/bin/sed -Eu 's/.*(Start|Stop).*/\1/' |
-  while read -r event; do
-    echo "Camera $event"
+/usr/bin/log stream --predicate 'subsystem == "com.apple.cameracapture" && (eventMessage CONTAINS "AVCaptureSessionDidStartRunningNotification" || eventMessage CONTAINS "AVCaptureSessionDidStopRunningNotification")' |
+  while read -r line; do
+    case "$line" in
+      *AVCaptureSessionDidStartRunningNotification*) event="Start" ;;
+      *AVCaptureSessionDidStopRunningNotification*) event="Stop" ;;
+      *) continue ;;
+    esac
+    echo "$(date '+%F %T') Camera $event"
     if [ "$event" = "Start" ]; then
       current_status=$(get_light_status)
       if [ "$current_status" = "0" ] && is_display_connected; then
         echo "Lamp was off, turning on"
-        curl -X PUT "http://192.168.1.131:9123/elgato/lights" -H "Content-Type: application/json" -d '{"lights":[{"on":1}]}'
+        set_light 1
         # Create flag file only if we actually turned on the light
         touch "$FLAG_FILE"
       fi
@@ -57,7 +65,7 @@ exec log stream --predicate '(eventMessage CONTAINS "AVCaptureSessionDidStartRun
       # Only turn off if the flag file exists (meaning the script turned it on)
       if [ -f "$FLAG_FILE" ]; then
         echo "Lamp off (was controlled by script)"
-        curl -X PUT "http://192.168.1.131:9123/elgato/lights" -H "Content-Type: application/json" -d '{"lights":[{"on":0}]}'
+        set_light 0
         # Remove the flag file
         rm "$FLAG_FILE"
       else
