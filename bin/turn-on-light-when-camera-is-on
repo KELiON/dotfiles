@@ -45,13 +45,20 @@ is_display_connected() {
     return $?
 }
 
-/usr/bin/log stream --predicate 'subsystem == "com.apple.cameracapture" && (eventMessage CONTAINS "AVCaptureSessionDidStartRunningNotification" || eventMessage CONTAINS "AVCaptureSessionDidStopRunningNotification")' |
+camera_on=0
+/usr/bin/log stream --predicate 'subsystem == "com.apple.controlcenter" && eventMessage CONTAINS "Active activity attributions changed"' |
   while read -r line; do
     case "$line" in
-      *AVCaptureSessionDidStartRunningNotification*) event="Start" ;;
-      *AVCaptureSessionDidStopRunningNotification*) event="Stop" ;;
+      *"Active activity attributions changed"*) ;;
       *) continue ;;
     esac
+    case "$line" in
+      *'"cam:'*) now_on=1 ;;
+      *) now_on=0 ;;
+    esac
+    [ "$now_on" = "$camera_on" ] && continue
+    camera_on=$now_on
+    if [ "$camera_on" = 1 ]; then event="Start"; else event="Stop"; fi
     echo "$(date '+%F %T') Camera $event"
     if [ "$event" = "Start" ]; then
       current_status=$(get_light_status)
